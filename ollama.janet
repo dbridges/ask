@@ -24,10 +24,15 @@
   {:response ((resp :message) :content)
    :history [;(drop 1 messages) (resp :message)]})
 
+(defn models [client]
+  ((http/get
+    (string (client :url) "/api/tags")) :models))
+
 (defn new [&opt cfg]
   (def client
     (merge default-config (or cfg {})))
   (fn [command & args]
     (case command
-      :ask (ask client ;args)
+      :ask    (ask client ;args)
+      :models (models client)
       (error (string "Unknown command '" command "' for client")))))

@@ -3,9 +3,16 @@
 
 (import ./config :as config)
 (import ./session :as session)
+(import ./ollama :as ollama)
 
 (defn clean []
   (map os/rm (sh/list-all-files config/session-dir))
+  (os/exit))
+
+(defn models []
+  (def client (ollama/new (config/config :ollama)))
+  (loop [{:name name} :in (client :models)]
+    (print name))
   (os/exit))
 
 (defn main [&]
@@ -18,6 +25,12 @@
                   :required      false
                   :short-circuit true
                   :action        clean}
+      "models"   {:kind          :flag
+                  :help          "List available models."
+                  :default       false
+                  :required      false
+                  :short-circuit true
+                  :action        models}
       "continue" {:kind     :flag
                   :short    "c"
                   :help     "Continue the previous session."
