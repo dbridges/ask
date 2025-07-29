@@ -16,7 +16,8 @@
        :messages messages
        :stream   false
        :think    (client :think)
-       :system   (client :system)}))
+       :system   (client :system)
+       :options  (client :options)}))
 
   (if (resp :error)
     (exit-error (resp :error)))

@@ -21,50 +21,55 @@
     (or 
       (argparse/argparse
         "Ask AI a question"
-        "clean"    {:kind          :flag
-                    :help          "Clean sessions."
-                    :default       false
-                    :required      false
-                    :short-circuit true
-                    :action        clean}
-        "models"   {:kind          :flag
-                    :help          "List available models."
-                    :default       false
-                    :required      false
-                    :short-circuit true
-                    :action        models}
-        "continue" {:kind     :flag
-                    :short    "c"
-                    :help     "Continue the previous session."
-                    :default  false
-                    :required false}
-        "history"  {:kind     :option
-                    :short    "H"
-                    :help     "History file to use."
-                    :default  nil
-                    :required false}
-        "persona"  {:kind     :option
-                    :short    "p"
-                    :help     "Persona to use from config file."
-                    :default  nil
-                    :required false}
-        "model"    {:kind     :option
-                    :short    "m"
-                    :help     "Model to use."
-                    :default  nil
-                    :required false}
-        "system"   {:kind     :option
-                    :help     "System message to use."
-                    :default  nil
-                    :required false}
-        "think"    {:kind     :flag
-                    :help     "Enable thinking."
-                    :default  nil
-                    :required false}
-        "no-think" {:kind     :flag
-                    :help     "Disable thinking."
-                    :default  nil
-                    :required false}
+        "clean"       {:kind          :flag
+                       :help          "Clean sessions."
+                       :default       false
+                       :required      false
+                       :short-circuit true
+                       :action        clean}
+        "models"      {:kind          :flag
+                       :help          "List available models."
+                       :default       false
+                       :required      false
+                       :short-circuit true
+                       :action        models}
+        "continue"    {:kind     :flag
+                       :short    "c"
+                       :help     "Continue the previous session."
+                       :default  false
+                       :required false}
+        "history"     {:kind     :option
+                       :short    "H"
+                       :help     "History file to use."
+                       :default  nil
+                       :required false}
+        "persona"     {:kind     :option
+                       :short    "p"
+                       :help     "Persona to use from config file."
+                       :default  nil
+                       :required false}
+        "model"       {:kind     :option
+                       :short    "m"
+                       :help     "Model to use."
+                       :default  nil
+                       :required false}
+        "system"      {:kind     :option
+                       :help     "System message to use."
+                       :default  nil
+                       :required false}
+        "think"       {:kind     :flag
+                       :help     "Enable thinking."
+                       :default  nil
+                       :required false}
+        "no-think"    {:kind     :flag
+                       :help     "Disable thinking."
+                       :default  nil
+                       :required false}
+        "temperature" {:kind     :option
+                       :short    "t"
+                       :help     "Temperature of the model."
+                       :default  nil
+                       :required false}
         :default {:kind :accumulate})
       {}))
 
@@ -88,6 +93,7 @@
                 :model (args "model")
                 :persona (args "persona")
                 :system (args "system")
+                :temperature (args "temperature")
                 :think (or (args "think")
                            (if (nil? (args "no-think")) nil (not (args "no-think"))))))
 

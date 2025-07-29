@@ -6,7 +6,10 @@
     {:url    "http://localhost:11434"
      :system "You are an expert assistant. Answer the following questions with brevity. If asked about code, answer with only the code."
      :model  "qwen2.5-coder:7b"
-     :think  false}
+     :think  false
+     :options {
+        :temperature 0.8
+     }}
     :personas {}})
 
 
@@ -17,22 +20,26 @@
 (os/mkdir dir)
 (os/mkdir session-dir)
 
-(defn make [&keys {:model   model
-                   :persona persona
-                   :think   think
-                   :system  system}]
+(defn make [&keys {:model       model
+                   :persona     persona
+                   :think       think
+                   :system      system
+                   :temperature temperature}]
   (def user-config
     (if (os/stat file)
           (eval-string (slurp file))
           @{}))
 
-  (def args-config @{:ollama @{}})
+  (def args-config @{:ollama @{:options @{}}})
 
   (if model
     (put (args-config :ollama) :model model))
 
   (if system
     (put (args-config :ollama) :system system))
+
+  (if temperature
+    (put ((args-config :ollama) :options) :temperature (scan-number temperature)))
 
   (if (not (nil? think))
     (put (args-config :ollama) :think think))
