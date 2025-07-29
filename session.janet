@@ -30,10 +30,10 @@
     (string/join $ sep)
     (spit p (string $ "\n"))))
 
-(defn new [history-file-path]
+(defn new [&keys {:history-file-path history-file-path :config config}]
   (def p (or history-file-path (make-session-path)))
   {:path    p
-   :client  (ollama/new (config/config :ollama))
+   :client  (ollama/new (config :ollama))
    :history (read-history p)})
 
 (defn ask [session query]
