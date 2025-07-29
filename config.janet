@@ -5,7 +5,8 @@
   {:ollama
     {:url    "http://localhost:11434"
      :system "You are an expert assistant. Answer the following questions with brevity. If asked about code, answer with only the code."
-     :model  "qwen2.5-coder:7b"}})
+     :model  "qwen2.5-coder:7b"}
+    :personas {}})
 
 
 (def dir (path/join (os/getenv "HOME") ".ask"))
