@@ -9,3 +9,7 @@
       (put rv k (deep-merge (rv k) v))
       (put rv k v)))
   rv)
+
+(defn exit-error [err]
+  (eprint err)
+  (os/exit 1))

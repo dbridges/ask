@@ -42,6 +42,11 @@
                     :help     "History file to use."
                     :default  nil
                     :required false}
+        "persona"  {:kind     :option
+                    :short    "p"
+                    :help     "Persona to use from config file."
+                    :default  nil
+                    :required false}
         "model"    {:kind     :option
                     :short    "m"
                     :help     "Model to use."
@@ -49,6 +54,9 @@
                     :required false}
         :default {:kind :accumulate})
       {}))
+
+  (if (or (has-value? (dyn :args) "-h") (has-value? (dyn :args) "--help"))
+    (os/exit))
 
   (def prompt 
     (if (nil? (args :default))
@@ -60,7 +68,7 @@
         (if (args "continue")
           (session/most-recent-session))))
 
-  (def config (config/make :model (args "model")))
+  (def config (config/make :model (args "model") :persona (args "persona")))
 
   (def session
     (session/new :history-path history-path :config config))

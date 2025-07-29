@@ -15,7 +15,7 @@
 (os/mkdir dir)
 (os/mkdir session-dir)
 
-(defn make [&keys {:model model}]
+(defn make [&keys {:model model :persona persona}]
   (def user-config
     (if (os/stat file)
           (eval-string (slurp file))
@@ -25,5 +25,10 @@
 
   (if model
     (put (args-config :ollama) :model model))
+
+  (if persona
+    (if-let [system-prompt ((user-config :personas) (keyword persona))]
+      (put (args-config :ollama) :system system-prompt)
+      (exit-error (string persona " persona not found"))))
 
   (deep-merge default-config user-config args-config))
