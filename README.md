@@ -34,7 +34,7 @@ ask -c "Can you explain your previous response more?"
 
 ## Configuration
 
-The program uses a `config.janet` file in your home directory. Here is an example configuration:
+The program uses a `~/.ask/config.janet` file. Here is an example configuration:
 
 ```janet
 {:ollama
@@ -46,5 +46,5 @@ The program uses a `config.janet` file in your home directory. Here is an exampl
 
 ## Directory Structure
 
-- `config.janet`: Configuration file for the program.
-- `.ask/sessions/`: Directory for storing session files.
+- `~/.ask/config.janet`: Configuration file for the program.
+- `~/.ask/sessions/`: Directory for storing session files.
