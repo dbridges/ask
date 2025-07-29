@@ -17,7 +17,10 @@
 (os/mkdir dir)
 (os/mkdir session-dir)
 
-(defn make [&keys {:model model :persona persona :think think}]
+(defn make [&keys {:model   model
+                   :persona persona
+                   :think   think
+                   :system  system}]
   (def user-config
     (if (os/stat file)
           (eval-string (slurp file))
@@ -27,6 +30,9 @@
 
   (if model
     (put (args-config :ollama) :model model))
+
+  (if system
+    (put (args-config :ollama) :system system))
 
   (if (not (nil? think))
     (put (args-config :ollama) :think think))

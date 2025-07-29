@@ -4,6 +4,7 @@
 (import ./config :as config)
 (import ./session :as session)
 (import ./ollama :as ollama)
+(use ./util)
 
 (defn clean []
   (map os/rm (sh/list-all-files config/session-dir))
@@ -52,6 +53,10 @@
                     :help     "Model to use."
                     :default  nil
                     :required false}
+        "system"   {:kind     :option
+                    :help     "System message to use."
+                    :default  nil
+                    :required false}
         "think"    {:kind     :flag
                     :help     "Enable thinking."
                     :default  nil
@@ -76,9 +81,13 @@
         (if (args "continue")
           (session/most-recent-session))))
 
+  (when (and (args "system") (args "persona"))
+    (exit-error "Cannot provide both 'system' and 'persona' arguments"))
+
   (def config (config/make
                 :model (args "model")
                 :persona (args "persona")
+                :system (args "system")
                 :think (or (args "think")
                            (if (nil? (args "no-think")) nil (not (args "no-think"))))))
 
