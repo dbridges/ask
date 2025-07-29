@@ -52,6 +52,14 @@
                     :help     "Model to use."
                     :default  nil
                     :required false}
+        "think"    {:kind     :flag
+                    :help     "Enable thinking."
+                    :default  nil
+                    :required false}
+        "no-think" {:kind     :flag
+                    :help     "Disable thinking."
+                    :default  nil
+                    :required false}
         :default {:kind :accumulate})
       {}))
 
@@ -68,7 +76,11 @@
         (if (args "continue")
           (session/most-recent-session))))
 
-  (def config (config/make :model (args "model") :persona (args "persona")))
+  (def config (config/make
+                :model (args "model")
+                :persona (args "persona")
+                :think (or (args "think")
+                           (if (nil? (args "no-think")) nil (not (args "no-think"))))))
 
   (def session
     (session/new :history-path history-path :config config))

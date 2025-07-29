@@ -1,4 +1,5 @@
 (import ./http :as http)
+(use ./util)
 
 (defn ask [client prompt &opt history]
   (def messages (if (nil? history)
@@ -14,7 +15,11 @@
       {:model    (client :model)
        :messages messages
        :stream   false
+       :think    (client :think)
        :system   (client :system)}))
+
+  (if (resp :error)
+    (exit-error (resp :error)))
 
   {:response ((resp :message) :content)
    :history [;(drop 1 messages) (resp :message)]})
