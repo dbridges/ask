@@ -41,7 +41,7 @@ The program uses a `~/.ask/config.janet` file. Here is an example configuration:
   {:url    "http://localhost:11434"
    :system "You are an expert assistant."
    :model  "qwen2.5-coder:7b"}
-  :personas {}}
+  :personas {:code "You are an expert programmer. Answer the following coding question:"}}
 ```
 
 ## Directory Structure
