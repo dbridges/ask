@@ -1,6 +1,6 @@
 # Ask
 
-Ask an LLM a question using Janet and Ollama.
+Ask an LLM a question using Janet and a compatible OpenAI API endpoint (Ollama, etc).
 
 ## Installation
 
@@ -34,14 +34,16 @@ ask -c "Can you explain your previous response more?"
 
 ## Configuration
 
-The program uses a `~/.ask/config.janet` file. Here is an example configuration:
+The program uses a `~/.ask/config.janet` file. Here is an example configuration for Ollama:
 
 ```janet
-{:ollama
-  {:url    "http://localhost:11434"
-   :system "You are an expert assistant."
-   :model  "qwen2.5-coder:7b"}
-  :personas {:code "You are an expert programmer. Answer the following coding question:"}}
+{:api
+  {:url    "http://localhost:11434/v1"
+   :model  "qwen2.5-coder:7b"
+   :temperature 0.8}
+ :personas {
+    :default "You are an expert assistant. Answer the following questions with brevity. If asked about code, answer with only the code."
+  }}
 ```
 
 ## Directory Structure

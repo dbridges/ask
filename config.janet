@@ -2,16 +2,13 @@
 (use ./util)
 
 (def default-config
-  {:ollama
-    {:url    "http://localhost:11434/api"
-     :system "You are an expert assistant. Answer the following questions with brevity. If asked about code, answer with only the code."
+  {:api {
+     :url    "http://localhost:11434/v1"
      :model  "qwen2.5-coder:7b"
-     :think  false
-     :options {
-        :temperature 0.8
-     }}
-    :personas {}})
-
+   }
+   :personas {
+      :default "You are an expert assistant. Answer the following request with brevity. If asked about code, answer with only the code."
+   }})
 
 (def dir (path/join (os/getenv "HOME") ".ask"))
 (def session-dir (path/join dir "sessions"))
@@ -22,7 +19,6 @@
 
 (defn make [&keys {:model       model
                    :persona     persona
-                   :think       think
                    :system      system
                    :temperature temperature}]
   (def user-config
@@ -30,23 +26,21 @@
           (eval-string (slurp file))
           @{}))
 
-  (def args-config @{:ollama @{:options @{}}})
+  (def args-config @{:api @{}})
 
   (if model
-    (put (args-config :ollama) :model model))
+    (put (args-config :api) :model model))
 
   (if system
-    (put (args-config :ollama) :system system))
+    (put (args-config :api) :system system))
 
   (if temperature
-    (put ((args-config :ollama) :options) :temperature (scan-number temperature)))
-
-  (if (not (nil? think))
-    (put (args-config :ollama) :think think))
+    (put (args-config :api) :temperature (scan-number temperature)))
 
   (if persona
-    (if-let [system-prompt ((user-config :personas) (keyword persona))]
-      (put (args-config :ollama) :system system-prompt)
+    (if-let [personas (deep-merge (default-config :personas) (user-config :personas))
+             system-prompt (personas (keyword persona))]
+      (put (args-config :api) :system system-prompt)
       (exit-error (string persona " persona not found"))))
 
   (deep-merge default-config user-config args-config))

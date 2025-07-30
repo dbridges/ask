@@ -1,4 +1,4 @@
-(import ./ollama :as ollama)
+(import ./api :as api)
 (import ./config :as config)
 
 (import spork/path)
@@ -30,10 +30,10 @@
     (string/join $ sep)
     (spit p (string $ "\n"))))
 
-(defn new [&keys {:history-file-path history-file-path :config config}]
-  (def p (or history-file-path (make-session-path)))
+(defn new [&keys {:history-path history-path :config config}]
+  (def p (or history-path (make-session-path)))
   {:path    p
-   :client  (ollama/new (config :ollama))
+   :client  (api/new (config :api))
    :history (read-history p)})
 
 (defn ask [session query]

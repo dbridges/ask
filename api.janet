@@ -11,24 +11,25 @@
 
   (def resp 
     (http/post
-      (string (client :url) "/chat")
-      {:model    (client :model)
-       :messages messages
-       :stream   false
-       :think    (client :think)
-       :system   (client :system)
-       :options  (client :options)}
+      (string (client :url) "/chat/completions")
+      {:model       (client :model)
+       :messages    messages
+       :stream      false
+       :temperature (client :temperature)}
       (client :auth-key)))
 
-  (if (resp :error)
-    (exit-error (resp :error)))
+  (def resp-message
+    (try
+      (((first (resp :choices)) :message) :content)
+      ([err]
+       (exit-error (pp resp)))))
 
-  {:response ((resp :message) :content)
-   :history [;(drop 1 messages) (resp :message)]})
+  {:response resp-message
+   :history [;(drop 1 messages) {:content resp-message :role "assistant"}]})
 
 (defn models [client]
   ((http/get
-    (string (client :url) "/tags" (client :auth-key))) :models))
+    (string (client :url) "/models") (client :auth-key)) :data))
 
 (defn new [&opt client]
   (fn [command & args]

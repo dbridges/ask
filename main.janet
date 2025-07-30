@@ -3,7 +3,7 @@
 
 (import ./config :as config)
 (import ./session :as session)
-(import ./ollama :as ollama)
+(import ./api :as api)
 (use ./util)
 
 (defn clean []
@@ -11,8 +11,8 @@
   (os/exit))
 
 (defn models []
-  (def client (ollama/new ((config/make) :ollama)))
-  (loop [{:name name} :in (client :models)]
+  (def client (api/new ((config/make) :api)))
+  (loop [{:id name} :in (client :models)]
     (print name))
   (os/exit))
 
@@ -46,7 +46,7 @@
         "persona"     {:kind     :option
                        :short    "p"
                        :help     "Persona to use from config file."
-                       :default  nil
+                       :default  :default
                        :required false}
         "model"       {:kind     :option
                        :short    "m"
@@ -55,14 +55,6 @@
                        :required false}
         "system"      {:kind     :option
                        :help     "System message to use."
-                       :default  nil
-                       :required false}
-        "think"       {:kind     :flag
-                       :help     "Enable thinking."
-                       :default  nil
-                       :required false}
-        "no-think"    {:kind     :flag
-                       :help     "Disable thinking."
                        :default  nil
                        :required false}
         "temperature" {:kind     :option
@@ -81,6 +73,7 @@
       (file/read stdin :all)
       (string/join (args :default) " ")))
 
+
   (def history-path
     (or (args "history")
         (if (args "continue")
@@ -93,9 +86,7 @@
                 :model (args "model")
                 :persona (args "persona")
                 :system (args "system")
-                :temperature (args "temperature")
-                :think (or (args "think")
-                           (if (nil? (args "no-think")) nil (not (args "no-think"))))))
+                :temperature (args "temperature")))
 
   (def session
     (session/new :history-path history-path :config config))
