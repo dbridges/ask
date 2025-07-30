@@ -11,13 +11,14 @@
 
   (def resp 
     (http/post
-      (string (client :url) "/api/chat")
+      (string (client :url) "/chat")
       {:model    (client :model)
        :messages messages
        :stream   false
        :think    (client :think)
        :system   (client :system)
-       :options  (client :options)}))
+       :options  (client :options)}
+      (client :auth-key)))
 
   (if (resp :error)
     (exit-error (resp :error)))
@@ -27,7 +28,7 @@
 
 (defn models [client]
   ((http/get
-    (string (client :url) "/api/tags")) :models))
+    (string (client :url) "/tags" (client :auth-key))) :models))
 
 (defn new [&opt client]
   (fn [command & args]

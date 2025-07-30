@@ -3,7 +3,7 @@
 
 (def default-config
   {:ollama
-    {:url    "http://localhost:11434"
+    {:url    "http://localhost:11434/api"
      :system "You are an expert assistant. Answer the following questions with brevity. If asked about code, answer with only the code."
      :model  "qwen2.5-coder:7b"
      :think  false
