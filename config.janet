@@ -7,7 +7,7 @@
      :model  "qwen2.5-coder:7b"
    }
    :personas {
-      :default "You are an expert assistant. Answer the following request with brevity. If asked about code, answer with only the code."
+      :default "You are an expert assistant. Answer the following request with brevity."
    }})
 
 (def dir (path/join (os/getenv "HOME") ".ask"))

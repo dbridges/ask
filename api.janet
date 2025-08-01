@@ -2,12 +2,9 @@
 (use ./util)
 
 (defn ask [client prompt &opt history]
-  (def messages (if (nil? history)
-                  [{:role "system" :content (client :system)}
-                   {:role "user" :content prompt}]
-                  [{:role "system" :content (client :system)}
-                   ;history
-                   {:role "user" :content prompt}]))
+  (def messages [{:role "system" :content (client :system)}
+                 ;(or history [])
+                 {:role "user" :content prompt}])
 
   (def resp 
     (http/post
