@@ -13,3 +13,8 @@
 (defn exit-error [err]
   (eprint err)
   (os/exit 1))
+
+(defn expand-user [p]
+  (if (string/has-prefix? "~" p)
+    (string (os/getenv "HOME") (string/slice p 1 -1))
+    p))

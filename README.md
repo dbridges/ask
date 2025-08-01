@@ -24,10 +24,22 @@ To ask a follow up question use `-c`:
 ask -c "Can you explain your previous response more?"
 ```
 
+Add a picture to your message:
+
+```sh
+ask -i path/to/image.png "Describe this image"
+```
+
+Add a set of text files to your message:
+
+```sh
+ask -i path/to/source/*.janet "Which file contains the api code?"
+```
+
 Full usage:
 
 ```
-usage: ask [option] ...
+usage: main.janet [option] ...
 
 Ask AI a question
 
@@ -37,6 +49,8 @@ Ask AI a question
  -c, --continue                              Continue the previous session.
  -h, --help                                  Show this help message.
  -H, --history VALUE                         History file to use.
+ -i, --include VALUE                         Add a file or glob of files to be included in the chat.
+                                             (Only image and text based files supported)
  -m, --model VALUE                           Model to use.
      --models                                List available models.
  -p, --persona VALUE=default                 Persona to use from config file.

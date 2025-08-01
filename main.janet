@@ -1,5 +1,6 @@
 (import spork/argparse)
 (import spork/sh)
+(import spork/path)
 (use sh)
 
 (import ./config :as config)
@@ -72,6 +73,11 @@
                        :help     "Temperature of the model."
                        :default  nil
                        :required false}
+        "include"     {:kind     :accumulate
+                       :short    "i"
+                       :help     "Add a file or glob of files to be included in the chat. (Only image and text based files supported)"
+                       :default  nil
+                       :required false}
         :default {:kind :accumulate})
       {}))
 
@@ -95,8 +101,20 @@
                 :system (args "system")
                 :temperature (args "temperature")))
 
+  (def files
+    (flatten
+      (map |(glob (expand-user $))
+           (get args "include" []))))
+
+  (loop [f :in files]
+    (when (not (sh/exists? f))
+      (exit-error (string f " does not exist."))))
+
   (def session
-    (session/new :history-path history-path :config config))
+    (session/new
+      :history-path history-path
+      :config config
+      :files files))
 
   (def response (session/ask session prompt))
 
