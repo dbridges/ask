@@ -12,25 +12,40 @@ jpm install
 
 ## Usage
 
-Run the `ask` executable with your question or use the `-c` flag to continue a previous session.
+Run the `ask` executable with your question and use the `-c` flag to continue a previous session.
 
 ```sh
 ask "What is the capital of Peru?"
 ```
 
-Or:
+To ask a follow up question use `-c`:
 
 ```sh
 ask -c "Can you explain your previous response more?"
 ```
 
-## Options
+Full usage:
 
-- `-h, --help`: Show help information.
-- `-c, --continue`: Continue the previous session.
-- `-H, --history <file>`: Use a specific history file.
-- `-p, --persona <name>`: Use a specific persona from the config file.
-- `-m, --model <name>`: Use a specific model.
+```
+usage: ask [option] ...
+
+Ask AI a question
+
+ Optional:
+     --clean                                 Clean sessions.
+ -c, --continue                              Continue the previous session.
+ -h, --help                                  Show this help message.
+ -H, --history VALUE                         History file to use.
+ -m, --model VALUE                           Model to use.
+     --models                                List available models.
+ -p, --persona VALUE=default                 Persona to use from config file.
+     --system VALUE                          System message to use.
+ -t, --temperature VALUE                     Temperature of the model.
+```
+
+## Glow Support
+
+If [Glow](https://github.com/charmbracelet/glow) is installed results will be passed through it for presentation.
 
 ## Configuration
 

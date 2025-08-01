@@ -1,5 +1,6 @@
 (import spork/argparse)
 (import spork/sh)
+(use sh)
 
 (import ./config :as config)
 (import ./session :as session)
@@ -15,6 +16,11 @@
   (loop [{:id name} :in (client :models)]
     (print name))
   (os/exit))
+
+(defn print-markdown [md]
+  (if ($? command -v glow > [stdout :null])
+    ($ echo ,md | glow)
+    (print md)))
 
 (defn main [&]
   (def args
@@ -79,9 +85,6 @@
         (if (args "continue")
           (session/most-recent-session))))
 
-  (when (and (args "system") (args "persona"))
-    (exit-error "Cannot provide both 'system' and 'persona' arguments"))
-
   (def config (config/make
                 :model (args "model")
                 :persona (args "persona")
@@ -91,4 +94,4 @@
   (def session
     (session/new :history-path history-path :config config))
 
-  (session/ask session prompt))
+  (print-markdown (session/ask session prompt)))

@@ -3,7 +3,7 @@
   :description "Ask an LLM a question"
   :url "https://github.com/dbridges/ask"
   :author "Dan Bridges"
-  :dependencies ["spork"])
+  :dependencies ["spork" "sh"])
 
 (declare-executable
   :name "ask"

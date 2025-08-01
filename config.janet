@@ -31,9 +31,6 @@
   (if model
     (put (args-config :api) :model model))
 
-  (if system
-    (put (args-config :api) :system system))
-
   (if temperature
     (put (args-config :api) :temperature (scan-number temperature)))
 
@@ -42,5 +39,8 @@
              system-prompt (personas (keyword persona))]
       (put (args-config :api) :system system-prompt)
       (exit-error (string persona " persona not found"))))
+
+  (if system
+    (put (args-config :api) :system system))
 
   (deep-merge default-config user-config args-config))

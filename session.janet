@@ -38,5 +38,5 @@
 
 (defn ask [session query]
   (def resp ((session :client) :ask query (session :history)))
-  (print (resp :response))
-  (write-history (session :path) (resp :history)))
+  (write-history (session :path) (resp :history))
+  (resp :response))
