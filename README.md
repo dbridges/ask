@@ -32,6 +32,7 @@ usage: ask [option] ...
 Ask AI a question
 
  Optional:
+     --ascii                                 Output without pretty markdown formatting.
      --clean                                 Clean sessions.
  -c, --continue                              Continue the previous session.
  -h, --help                                  Show this help message.
