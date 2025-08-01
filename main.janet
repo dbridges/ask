@@ -39,6 +39,10 @@
                        :required      false
                        :short-circuit true
                        :action        models}
+        "ascii"       {:kind     :flag
+                       :help     "Output without pretty markdown formatting."
+                       :default  false
+                       :required false}
         "continue"    {:kind     :flag
                        :short    "c"
                        :help     "Continue the previous session."
@@ -94,4 +98,8 @@
   (def session
     (session/new :history-path history-path :config config))
 
-  (print-markdown (session/ask session prompt)))
+  (def response (session/ask session prompt))
+
+  (if (args "ascii")
+    (print response)
+    (print-markdown response)))
