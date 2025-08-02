@@ -23,6 +23,10 @@
     ($ echo ,md | glow)
     (print md)))
 
+(defn config []
+  ($ ,(os/getenv "EDITOR") ,config/file)
+  (os/exit))
+
 (defn main [&]
   (def args
     (or 
@@ -34,6 +38,12 @@
                        :required      false
                        :short-circuit true
                        :action        clean}
+        "config"      {:kind          :flag
+                       :help          "Open the config file for editing."
+                       :default       false
+                       :required      false
+                       :short-circuit true
+                       :action        config}
         "models"      {:kind          :flag
                        :help          "List available models."
                        :default       false
@@ -84,11 +94,17 @@
   (if (or (has-value? (dyn :args) "-h") (has-value? (dyn :args) "--help"))
     (os/exit))
 
+  # Handle subcommands for convenience
+  (when (= (length (args :default)) 1)
+    (case (first (args :default))
+      "clean"  (clean)
+      "config" (config)
+      "models" (models)))
+
   (def prompt 
     (if (nil? (args :default))
       (file/read stdin :all)
       (string/join (args :default) " ")))
-
 
   (def history-path
     (or (args "history")

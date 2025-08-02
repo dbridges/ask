@@ -13,7 +13,7 @@
       "text")))
 
 (defn base64-data [fname]
-  ($< base64 -i ,fname))
+  ($<_ base64 -i ,fname))
 
 (defn text-data [fname]
   (string "File Name: " fname "\nFile Content:\n\n" (slurp fname)))
