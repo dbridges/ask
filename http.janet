@@ -1,4 +1,5 @@
 (import spork/json)
+(import spork/http)
 (use sh)
 
 (defn parse-body [body]
@@ -9,7 +10,7 @@
   (when auth-key
       (array/push header-args "-H")
       (array/push header-args (string "Authorization: Bearer " auth-key)))
-  (parse-body ($< curl -s ;header-args ,url)))
+  (parse-body ($<_ curl -q -s ;header-args ,url)))
 
 (defn post [url rawbody &opt auth-key]
   (def body (string (json/encode rawbody)))
@@ -18,6 +19,6 @@
       (array/push header-args "-H")
       (array/push header-args (string "Authorization: Bearer " auth-key)))
   (->>
-    ($< curl -s ;header-args -d ,body ,url)
+    ($<_ curl -q -s ;header-args -d ,body ,url)
     (parse-body)))
 

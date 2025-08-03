@@ -19,8 +19,8 @@
   (os/exit))
 
 (defn print-markdown [md]
-  (if ($? command -v glow > [stdout :null])
-    ($ echo ,md | glow)
+  (if (cmd-exists? "glow")
+    ($ glow <,md)
     (print md)))
 
 (defn config []
@@ -85,7 +85,7 @@
                        :required false}
         "include"     {:kind     :accumulate
                        :short    "i"
-                       :help     "Add a file or glob of files to be included in the chat. (Only image and text based files supported)"
+                       :help     "Add a file, glob of files or url to be included in the chat. (Only image and text based files supported)"
                        :default  nil
                        :required false}
         :default {:kind :accumulate})
@@ -95,7 +95,7 @@
     (os/exit))
 
   # Handle subcommands for convenience
-  (when (= (length (args :default)) 1)
+  (when (= (length (or (args :default) [])) 1)
     (case (first (args :default))
       "clean"  (clean)
       "config" (config)
@@ -123,7 +123,7 @@
            (get args "include" []))))
 
   (loop [f :in files]
-    (when (not (sh/exists? f))
+    (when (not (or (sh/exists? f) (url? f)))
       (exit-error (string f " does not exist."))))
 
   (def session

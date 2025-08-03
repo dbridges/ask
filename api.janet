@@ -9,7 +9,9 @@
 (defn content-type [fname]
   (let [ext (string/ascii-lower (path/posix/ext fname))]
     (cond
-      (has-value? [".jpg" ".jpeg" ".png" ".heic" ".heif" ".webp"] ext) "image_url"
+      (image-url? fname) "image_url"
+      (url? fname)       "url"
+      (image? fname)     "image"
       "text")))
 
 (defn base64-data [fname]
@@ -18,15 +20,25 @@
 (defn text-data [fname]
   (string "File Name: " fname "\nFile Content:\n\n" (slurp fname)))
 
-(defn image-url [fname]
+(defn web-data [url]
+  (var content ($<_ curl -s ,url))
+
+  (when (cmd-exists? "pandoc")
+    (set content ($<_ pandoc -f html -t markdown <,content)))
+
+  (string "URL: " url "\nPage Content:\n\n" content))
+
+(defn base64-image-data [fname]
   (def data (base64-data fname))
   (string "data:" (mimetype fname) ";base64," data))
 
 (defn file-message [fname]
   (def t (content-type fname))
   (case t
-    "image_url" {:type t :image_url {:url (image-url fname)}}
-    "text"      {:type t :text (text-data fname)}))
+    "image_url" {:type "image_url" :image_url {:url fname}}
+    "image"     {:type "image_url" :image_url {:url (base64-image-data fname)}}
+    "url"       {:type "text" :text (web-data fname)}
+    "text"      {:type "text" :text (text-data fname)}))
 
 (defn message-content [prompt files]
   (if (empty? files)
@@ -47,11 +59,10 @@
        :temperature (client :temperature)}
       (client :auth-key)))
 
-  (def resp-message
-    (try
-      (((first (resp :choices)) :message) :content)
-      ([err]
-       (exit-error (pp resp)))))
+  (def resp-message (get-in resp [:choices 0 :message :content]))
+
+  (when (nil? resp-message)
+    (exit-error (pp resp)))
 
   {:response resp-message
    :history [;(drop 1 messages) {:content resp-message :role "assistant"}]})
