@@ -40,4 +40,7 @@
   (and (url? name) (image? name)))
 
 (defn present? [v]
-  (and v (> (length v) 0)))
+  (and v
+       (if (lengthable? v )
+         (> (length v) 0)
+         true)))
