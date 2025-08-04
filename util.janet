@@ -39,3 +39,5 @@
 (defn image-url? [name]
   (and (url? name) (image? name)))
 
+(defn present? [v]
+  (and v (> (length v) 0)))

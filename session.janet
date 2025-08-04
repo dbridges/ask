@@ -27,10 +27,21 @@
    :history (read-history p)
    :files   files})
 
+(def tool-call-peg
+  ~{:block-start   (* "```" (+ "sh\n" "bash\n"))
+    :block-end     (* "```")
+    :not-block-end (if-not :block-end 1)
+    :code-block    (* :block-start (/ (<- (some :not-block-end)) ,string/trim) :block-end)
+    :main          (some (+ :code-block 1))})
+
+(defn response-tool-calls [content]
+  (peg/match tool-call-peg content))
+
 (defn ask [session query]
   (def resp ((session :client)
-             :ask query
+             :ask     query
              :history (session :history)
-             :files (session :files)))
+             :files   (session :files)))
   (write-history (session :path) (resp :history))
-  (resp :response))
+  {:content    (resp :response)
+   :tool-calls (response-tool-calls (resp :response))})

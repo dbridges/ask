@@ -1,6 +1,7 @@
 (import spork/argparse)
 (import spork/sh)
 (import spork/path)
+(import jty)
 (use sh)
 
 (import ./config :as config)
@@ -135,5 +136,16 @@
   (def response (session/ask session prompt))
 
   (if (args "ascii")
-    (print response)
-    (print-markdown response)))
+    (print (response :content))
+    (print-markdown (response :content)))
+
+  (when (present? (response :tool-calls))
+    (def cmd (jty/select
+                "Perform any of the following tool calls?"
+                [;(response :tool-calls) "No"]))
+
+    (when (= cmd "No")
+      (os/exit))
+    
+    (print cmd)
+    ($ ;(sh/split cmd))))
