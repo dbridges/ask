@@ -44,3 +44,6 @@
        (if (lengthable? v )
          (> (length v) 0)
          true)))
+
+(defn dig [ds & ks]
+  (get-in ds ks))

@@ -1,7 +1,25 @@
+(import spork/json)
 (import spork/path)
 (use sh)
-(import ./http :as http)
+
 (use ./util)
+
+(defn parse-body [body]
+  (json/decode body true true))
+
+(defn fetch [url &opt auth-key body]
+  (def args @[])
+
+  (when auth-key
+      (array/push args "-H" (string "Authorization: Bearer " auth-key)))
+
+  (when body
+    (array/push args "-H"  "Content-Type: application/json")
+    (array/push args "-d" (string (json/encode body))))
+
+  (->>
+    ($<_ curl -q -s ;args ,url)
+    (parse-body)))
 
 (defn mimetype [fname]
   ($<_ file --mime-type -b ,fname))
@@ -51,15 +69,15 @@
                  {:role "user" :content (message-content prompt files)}])
 
   (def resp 
-    (http/post
+    (fetch
       (string (client :url) "/chat/completions")
+      (client :auth-key)
       {:model       (client :model)
        :messages    messages
        :stream      false
-       :temperature (client :temperature)}
-      (client :auth-key)))
+       :temperature (client :temperature)}))
 
-  (def resp-message (get-in resp [:choices 0 :message :content]))
+  (def resp-message (dig resp :choices 0 :message :content))
 
   (when (nil? resp-message)
     (exit-error (pp resp)))
@@ -68,8 +86,8 @@
    :history [;(drop 1 messages) {:content resp-message :role "assistant"}]})
 
 (defn models [client]
-  ((http/get
-    (string (client :url) "/models") (client :auth-key)) :data))
+  (let [url (string (client :url) "/models")]
+    ((fetch url (client :auth-key)) :data)))
 
 (defn new [&opt client]
   (fn [command & args]

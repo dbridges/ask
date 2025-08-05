@@ -9,7 +9,6 @@
   :source ["api.janet"
            "main.janet"
            "util.janet"
-           "http.janet"
            "session.janet"])
 
 (declare-executable
