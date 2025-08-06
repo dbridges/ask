@@ -23,7 +23,7 @@
 (defn new [&keys {:history-path history-path :config config :files files}]
   (def p (or history-path (make-session-path)))
   {:path    p
-   :client  (api/new (config :api))
+   :client  (api/new config)
    :history (read-history p)
    :files   files})
 

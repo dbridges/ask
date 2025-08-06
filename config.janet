@@ -2,13 +2,11 @@
 (use ./util)
 
 (def default-config
-  {:api {
-     :url    "http://localhost:11434/v1"
-     :model  "qwen2.5-coder:7b"
-   }
-   :personas {
-      :default "You are an expert assistant being accessed from the command line. Answer the following request with brevity. If asked for CLI commands, return the commands in fenced code blocks."
-   }})
+  {:model       "qwen2.5-coder:7b"
+   :temperature 0.8
+   :url         "http://localhost:11434/v1"
+   :auth-key    nil
+   :system      "You are an expert assistant being accessed from the command line. Answer the following request with brevity. If asked for CLI commands, return the commands in fenced code blocks."})
 
 (def dir (path/join (os/getenv "HOME") ".ask"))
 (def session-dir (path/join dir "sessions"))
@@ -17,30 +15,13 @@
 (os/mkdir dir)
 (os/mkdir session-dir)
 
-(defn make [&keys {:model       model
-                   :persona     persona
-                   :system      system
-                   :temperature temperature}]
+(defn make [&keys args]
   (def user-config
     (if (os/stat file)
           (eval-string (slurp file))
           @{}))
 
-  (def args-config @{:api @{}})
-
-  (if model
-    (put (args-config :api) :model model))
-
-  (if temperature
-    (put (args-config :api) :temperature (scan-number temperature)))
-
-  (if persona
-    (if-let [personas (deep-merge (default-config :personas) (user-config :personas))
-             system-prompt (personas (keyword persona))]
-      (put (args-config :api) :system system-prompt)
-      (exit-error (string persona " persona not found"))))
-
-  (if system
-    (put (args-config :api) :system system))
-
-  (deep-merge default-config user-config args-config))
+  (reduce
+    (fn [acc el] (merge acc (get user-config el {})))
+    (merge default-config args)
+    [:default ;(get args :personas [])]))

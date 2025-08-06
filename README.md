@@ -88,37 +88,40 @@ If you include a webpage url using `ask -i https://github.com/dbridges/ask "What
 
 ## Configuration
 
-The program config is stored in `~/.ask/config.janet`. Here is an example configuration for Ollama:
+The program config is stored in `~/.ask/config.janet`. Configurations are stored as personas. Multiple personas can be referenced as command line arguments, their attributes will be merged in the order specified. Here is an example config:
 
 ```janet
 {
-  :api {
+  :default {
     :url "http://localhost:11434/v1"
     :model "qwen2.5-coder:7b"
     :temperature 0.8
+    :system "You are an expert assistant being accessed from the command line. Answer the following request:"
   }
-
-  :personas {
-    :default "You are an expert assistant. Answer the following questions with brevity."
-  }
-}
-```
-
-An example configuration for any external Open AI compatible API (e.g. Gemini, Anthropic, etc)
-
-```
-{
-  :api {
+  :gemini {
     :url "https://generativelanguage.googleapis.com/v1beta/openai"
     :model "gemini-2.5-flash"
-    :auth-key "YOUR_API_KEY"
+    :auth-key "YOUR_AUTH_KEY"
   }
-
-  :personas {
-    :review "You are an expert programmer. Review the supplied git diff. Provide succinct feedback addressing complexity, security, and accuracy of the code changes."
+  :claude {
+    :url "https://api.anthropic.com/v1"
+    :model "claude-sonnet-4-20250514"
+    :auth-key "YOUR_AUTH_KEY"
+  }
+  :review {
+    :system "You are an expert programmer. Review the supplied git diff. Provide succinct feedback addressing complexity, security, and accuracy of the code changes."
+    :temperature 0.4
   }
 }
 ```
+
+With this config, you can run Claude as a reviewer using:
+
+```
+git diff | ask -p claude -p review
+```
+
+If no configs are specified on the command line `ask` will use the `:default` config.
 
 ## Directory Structure
 

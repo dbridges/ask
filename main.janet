@@ -14,7 +14,7 @@
   (os/exit))
 
 (defn models []
-  (def client (api/new ((config/make) :api)))
+  (def client (api/new (config/make)))
   (loop [{:id name} :in (client :models)]
     (print name))
   (os/exit))
@@ -65,10 +65,10 @@
                        :help     "History file to use."
                        :default  nil
                        :required false}
-        "persona"     {:kind     :option
+        "persona"     {:kind     :accumulate
                        :short    "p"
-                       :help     "Persona to use from config file."
-                       :default  :default
+                       :help     "Persona to use from config file. Multiple personas can be specified and will be merged together in the order they appear."
+                       :default  []
                        :required false}
         "model"       {:kind     :option
                        :short    "m"
@@ -83,6 +83,7 @@
                        :short    "t"
                        :help     "Temperature of the model."
                        :default  nil
+                       :map      scan-number
                        :required false}
         "include"     {:kind     :accumulate
                        :short    "i"
@@ -113,9 +114,9 @@
           (session/most-recent-session))))
 
   (def config (config/make
-                :model (args "model")
-                :persona (args "persona")
-                :system (args "system")
+                :model       (args "model")
+                :personas    (map keyword (args "persona"))
+                :system      (args "system")
                 :temperature (args "temperature")))
 
   (def files
